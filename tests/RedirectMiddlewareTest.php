@@ -306,7 +306,7 @@ class RedirectMiddlewareTest extends TestCase
      */
     public function testRemoveCurlAuthorizationOptionsOnRedirect($auth)
     {
-        if (!defined('\CURLOPT_HTTPAUTH') || !defined('\CURLOPT_USERPWD')) {
+        if (!defined('\CURLOPT_HTTPAUTH')) {
             self::markTestSkipped('ext-curl is required for this test');
         }
 
