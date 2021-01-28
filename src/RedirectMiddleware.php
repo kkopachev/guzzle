@@ -148,7 +148,7 @@ class RedirectMiddleware
         }
     }
 
-    public function modifyRequest(RequestInterface $request, array $options, ResponseInterface $response): RequestInterface
+    public function modifyRequest(RequestInterface $request, array &$options, ResponseInterface $response): RequestInterface
     {
         // Request modifications to apply.
         $modify = [];
@@ -191,6 +191,11 @@ class RedirectMiddleware
         // Remove Authorization header if host is different.
         if ($request->getUri()->getHost() !== $modify['uri']->getHost()) {
             $modify['remove_headers'][] = 'Authorization';
+
+            // If authorization is handled by curl, unset it too
+            if (defined('\CURLOPT_HTTPAUTH') && defined('\CURLOPT_USERPWD')) {
+                unset($options['curl'][\CURLOPT_HTTPAUTH], $options['curl'][\CURLOPT_USERPWD]);
+            }
         }
 
         return Psr7\Utils::modifyRequest($request, $modify);
